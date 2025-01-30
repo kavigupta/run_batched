@@ -6,10 +6,22 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "run-batched"
-copyright = "2025, Kavi Gupta"
-author = "Kavi Gupta"
-release = "1.0.0"
+import configparser
+import os
+
+
+config = configparser.ConfigParser()
+with open(os.path.join(os.path.dirname(__file__), "..", "..", "setup.cfg")) as f:
+    config.read_file(f)
+config = config["metadata"]
+
+
+project = config["name"]
+author = config["author"]
+copyright = "2024, " + author
+
+release = version = config["version"]
+
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

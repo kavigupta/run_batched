@@ -5,8 +5,6 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="run_batched",
-    version="1.0.1",
-    author="Kavi Gupta",
     author_email="run-batched@kavigupta.org",
     description="Permanant cache.",
     long_description=long_description,
