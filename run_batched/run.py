@@ -7,28 +7,20 @@ def run_batched(m, x, bs, pbar=lambda x: x, *, device="cuda"):
     Run m on x in batches of size bs, and concatenate the results.
 
     If x is a dict, treat it as a dict of arrays, each of which is batched
-        together. This requires that the length of each array is the same.
+    together. This requires that the length of each array is the same.
 
     If m returns a dict, treat it as a dict of arrays, each of which is
-        concatenated together. This requires that the length of each array is
-        the same.
+    concatenated together. This requires that the length of each array is
+    the same.
 
-    Arguments
-    ---------
-    m : function
-        A function which takes a batch of data and returns a batch of data.
-    x : array or dict of arrays
-        The data to be batched.
-    bs : int
-        The batch size.
-    pbar : function
-        A function which takes an iterable and returns an iterable. This is
+    :param m: A function which takes a batch of data and returns a batch of data.
+        The inputs and outputs are either tensors or dicts of tensors.
+    :param x: The data to be batched.
+    :param bs: The batch size.
+    :param pbar: A function which takes an iterable and returns an iterable. This is
         used to wrap the iterable over the batches of data to produce a pbar.
 
-    Returns
-    -------
-    array or dict of arrays
-        The result of running m on x in batches of size bs.
+    :return: The result of running m on x in batches of size bs.
     """
     if not isinstance(bs, int):
         raise ValueError("Batch size must be an integer.")
