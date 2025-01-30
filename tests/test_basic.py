@@ -18,6 +18,7 @@ class TestBasic(unittest.TestCase):
                 lambda x: instrumented_double(x, batch_sizes.append),
                 np.array([1, 2, 3]),
                 2,
+                device="cpu",
             ).tolist(),
             [2, 4, 6],
         )
