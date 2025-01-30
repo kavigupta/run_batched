@@ -67,7 +67,7 @@ class TestBasic(unittest.TestCase):
         )
         self.assertEqual(batch_sizes, [2] * 20)
 
-    def test_batches_subsequent(self):
+    def test_batches_consecutive(self):
         x = np.arange(10, dtype=np.float32)
         batch_sizes = []
         self.assertEqual(

@@ -34,24 +34,63 @@ def run_batched(m, x, bs, pbar=lambda x: x, *, device="cuda"):
         raise ValueError("Batch size must be an integer.")
     if bs <= 0:
         raise ValueError("Batch size must be positive.")
-    if isinstance(x, dict):
-        [size] = set(x.shape[0] for x in x.values())
-    else:
-        size = x.shape[0]
+    size = overall_size(x)
     assert size != 0
 
     with torch.no_grad():
         ys = []
         for i in pbar(range((size + bs - 1) // bs)):
-            select = lambda x, i=i: torch.tensor(x[i * bs : (i + 1) * bs]).to(device)
-            x_to_use = (
-                {k: select(x[k]) for k in x} if isinstance(x, dict) else select(x)
-            )
+            x_to_use = select(x, i * bs, (i + 1) * bs, device)
             y = m(x_to_use)
             y = to_numpy(y)
             ys.append(y)
         result = concatenate_all(ys)
         return result
+
+
+def overall_size(x):
+    """
+    Compute the overall size of an array or dict of arrays.
+
+    Arguments
+    ---------
+    x : array or dict of arrays
+        The arrays to be measured.
+
+    Returns
+    -------
+    int
+    """
+    if isinstance(x, dict):
+        each = {overall_size(v) for v in x.values()}
+        if len(each) != 1:
+            raise ValueError(
+                "All arrays must have the same length, but got: {}".format(each)
+            )
+        return each.pop()
+    return x.shape[0]
+
+
+def select(x, start, end, device):
+    """
+    Select a range of indices from an array or dict of arrays.
+
+    Arguments
+    ---------
+    x : array or dict of arrays
+        The arrays to be sliced.
+    start : int
+        The start index.
+    end : int
+        The end index.
+
+    Returns
+    -------
+    array or dict of arrays
+    """
+    if isinstance(x, dict):
+        return {k: select(v, start, end, device) for k, v in x.items()}
+    return torch.tensor(x[start:end]).to(device)
 
 
 def concatenate_all(ys):
@@ -69,7 +108,7 @@ def concatenate_all(ys):
     """
     if isinstance(ys[0], dict):
         assert all(y.keys() == ys[0].keys() for y in ys)
-        result = {k: np.concatenate([y[k] for y in ys]) for k in ys[0]}
+        result = {k: concatenate_all([y[k] for y in ys]) for k in ys[0]}
     else:
         result = np.concatenate(ys)
     return result
@@ -80,7 +119,7 @@ def to_numpy(y):
     Convert the following tensor or dict of tensors to numpy arrays.
     """
     if isinstance(y, dict):
-        y = {k: y[k].cpu().numpy() for k in y}
+        y = {k: to_numpy(y[k]) for k in y}
     else:
         y = y.cpu().numpy()
     return y
