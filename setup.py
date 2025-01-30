@@ -20,4 +20,8 @@ setuptools.setup(
     ],
     python_requires=">=3.9",
     install_requires=["torch", "numpy"],
+    # documentation
+    project_urls={
+        "Documentation": "https://run-batched.readthedocs.io/en/latest/#",
+    },
 )
