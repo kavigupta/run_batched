@@ -48,6 +48,20 @@ class TestBasic(unittest.TestCase):
             },
         )
 
+    def test_inconsistent_sizes(self):
+        with self.assertRaisesRegex(
+            ValueError, "All arrays must have the same length, but got: {2, 3}"
+        ):
+            run_batched(
+                lambda x: instrumental_keyed(x, lambda _: None),
+                {
+                    "a": np.arange(2),
+                    "b": np.arange(3),
+                },
+                2,
+                device="cpu",
+            )
+
     def test_return_keyed_nested(self):
         batch_sizes = []
         res = run_batched(

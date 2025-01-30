@@ -64,9 +64,7 @@ def overall_size(x):
     if isinstance(x, dict):
         each = {overall_size(v) for v in x.values()}
         if len(each) != 1:
-            raise ValueError(
-                "All arrays must have the same length, but got: {}".format(each)
-            )
+            raise ValueError(f"All arrays must have the same length, but got: {each}")
         return each.pop()
     return x.shape[0]
 

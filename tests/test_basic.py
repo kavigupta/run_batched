@@ -46,11 +46,11 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(batch_sizes, [6])
 
     def test_invalid_batch_size_not_int(self):
-        with self.assertRaises(ValueError, msg="Batch size must be an integer."):
+        with self.assertRaisesRegex(ValueError, "Batch size must be an integer."):
             run_batched(lambda x: x, np.array([1, 2, 3]), 2.5, device="cpu")
 
     def test_invalid_batch_size_negative(self):
-        with self.assertRaises(ValueError, msg="Batch size must be positive."):
+        with self.assertRaisesRegex(ValueError, "Batch size must be positive."):
             run_batched(lambda x: x, np.array([1, 2, 3]), -1, device="cpu")
 
     def test_only_batch_first_axis(self):
