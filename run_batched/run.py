@@ -30,6 +30,10 @@ def run_batched(m, x, bs, pbar=lambda x: x, *, device="cuda"):
     array or dict of arrays
         The result of running m on x in batches of size bs.
     """
+    if not isinstance(bs, int):
+        raise ValueError("Batch size must be an integer.")
+    if bs <= 0:
+        raise ValueError("Batch size must be positive.")
     if isinstance(x, dict):
         [size] = set(x.shape[0] for x in x.values())
     else:
