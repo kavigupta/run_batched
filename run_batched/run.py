@@ -39,7 +39,7 @@ def run_batched(m, x, bs, pbar=lambda x: x, *, device="cuda"):
     with torch.no_grad():
         ys = []
         for i in pbar(range((size + bs - 1) // bs)):
-            select = lambda x: torch.tensor(x[i * bs : (i + 1) * bs]).to(device)
+            select = lambda x, i=i: torch.tensor(x[i * bs : (i + 1) * bs]).to(device)
             x_to_use = (
                 {k: select(x[k]) for k in x} if isinstance(x, dict) else select(x)
             )
